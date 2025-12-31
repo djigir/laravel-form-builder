@@ -4,6 +4,7 @@ namespace Djigir\LaravelFormBuilder;
 
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 
 class FormBuilder
 {
@@ -279,8 +280,11 @@ class FormBuilder
     /**
      * Create a select dropdown
      */
-    public function select(string $name, array $options = [], $selected = null, array $attributes = []): HtmlString
+    public function select(string $name, $options = [], $selected = null, array $attributes = []): HtmlString
     {
+        // Конвертируем Collection в массив, если нужно
+        $options = $this->normalizeOptions($options);
+
         $value = $this->getValueAttribute($name, $selected);
 
         $html = '<select name="' . $name . '"';
@@ -417,6 +421,22 @@ class FormBuilder
         $html .= '>';
 
         return new HtmlString($html);
+    }
+
+    /**
+     * Normalize options - convert Collection to array
+     */
+    protected function normalizeOptions($options): array
+    {
+        if ($options instanceof Collection) {
+            return $options->toArray();
+        }
+
+        if (is_object($options) && method_exists($options, 'toArray')) {
+            return $options->toArray();
+        }
+
+        return (array) $options;
     }
 
     /**
