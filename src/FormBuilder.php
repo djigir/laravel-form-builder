@@ -295,6 +295,13 @@ class FormBuilder
 
         $html .= '>';
 
+        // Добавляем пустую опцию по умолчанию, если не передан параметр 'placeholder' => false
+        if (!isset($attributes['placeholder']) || $attributes['placeholder'] !== false) {
+            $placeholderText = is_string($attributes['placeholder'] ?? null) ? $attributes['placeholder'] : '';
+            $isSelected = $value === null || $value === '' ? ' selected' : '';
+            $html .= '<option value=""' . $isSelected . '>' . e($placeholderText) . '</option>';
+        }
+
         foreach ($options as $optionValue => $optionLabel) {
             $isSelected = $this->isSelected($value, $optionValue) ? ' selected' : '';
             $html .= '<option value="' . e($optionValue) . '"' . $isSelected . '>' . e($optionLabel) . '</option>';
