@@ -302,9 +302,30 @@ class FormBuilder
             $html .= '<option value=""' . $isSelected . '>' . e($placeholderText) . '</option>';
         }
 
-        foreach ($options as $optionValue => $optionLabel) {
-            $isSelected = $this->isSelected($value, $optionValue) ? ' selected' : '';
-            $html .= '<option value="' . e($optionValue) . '"' . $isSelected . '>' . e($optionLabel) . '</option>';
+        // обработка optgroup
+        foreach ($options as $key => $option) {
+            if (is_array($option)) {
+                if (empty($option)) {
+                    continue;
+                }
+
+                $html .= '<optgroup label="' . e($key) . '">';
+
+                foreach ($option as $optionValue => $optionLabel) {
+                    $isSelected = $this->isSelected($value, $optionValue) ? ' selected' : '';
+                    $html .= '<option value="' . e($optionValue) . '"' . $isSelected . '>'
+                        . e($optionLabel)
+                        . '</option>';
+                }
+
+                $html .= '</optgroup>';
+                continue;
+            }
+
+            $isSelected = $this->isSelected($value, $key) ? ' selected' : '';
+            $html .= '<option value="' . e($key) . '"' . $isSelected . '>'
+                . e($option)
+                . '</option>';
         }
 
         $html .= '</select>';
